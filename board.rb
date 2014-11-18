@@ -35,7 +35,8 @@ class Board
 
   # king's list of valid moves is zero!
   def checkmate?(color)
-    my_king.valid_moves.empty?
+    in_check?(color) && pieces.select { |piece| piece.color == color }
+      .all? { |piece| piece.valid_moves.empty? }
   end
 
   def my_king
@@ -63,7 +64,7 @@ class Board
   def move(start_pos, end_pos)
     raise DangerOfCheck unless self[start_pos] &&
       self[start_pos].valid_moves.include?(end_pos)
-      
+
     move!(start_pos, end_pos)
   end
 
