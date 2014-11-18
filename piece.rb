@@ -42,8 +42,8 @@ class Pawn < Piece
     valid_moves = []
 
     deltas = {
-      :b => [[1, 0],[1, -1],[1, 1]],
-      :w => [[-1,0],[-1,-1],[-1,1]]
+      :b => [[1, 0],[2, 0],[1, -1],[1, 1]],
+      :w => [[-1,0],[-2, 0],[-1,-1],[-1,1]]
     }
 
     deltas[color].each_with_index do |(dx, dy), idx|
@@ -55,6 +55,9 @@ class Pawn < Piece
       case idx
       when 0
         valid_moves << new_pos if board[new_pos].nil?
+      when 1
+        valid_moves << new_pos if board[new_pos].nil? && color == :b && pos[0] == 1
+        valid_moves << new_pos if board[new_pos].nil? && color == :w && pos[0] == 6
       else
         if board[new_pos] && board[new_pos].color != self.color
           valid_moves << new_pos

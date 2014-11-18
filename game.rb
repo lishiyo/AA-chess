@@ -6,6 +6,9 @@ require './stepping_pieces.rb'
 class InvalidMove < StandardError
 end
 
+class DangerOfCheck < InvalidMove
+end
+
 class Game
 
   attr_reader :board
@@ -29,12 +32,12 @@ class Game
           when rooks
             @board[pos] = Rook.new(@board, pos, :b)
           when knights
-            @board[pos] = Knight.new(@board, pogames, :b)
+            @board[pos] = Knight.new(@board, pos, :b)
           when bishops
             @board[pos] = Bishop.new(@board, pos, :b)
-          when 3
-            @board[pos] = King.new(@board, pos, :b)
           when 4
+            @board[pos] = King.new(@board, pos, :b)
+          when 3
             @board[pos] = Queen.new(@board, pos, :b)
           end
         when 1 # black pawns
@@ -49,9 +52,9 @@ class Game
             @board[pos] = Knight.new(@board, pos, :w)
           when bishops
             @board[pos] = Bishop.new(@board, pos, :w)
-          when 3
-            @board[pos] = King.new(@board, pos, :w)
           when 4
+            @board[pos] = King.new(@board, pos, :w)
+          when 3
             @board[pos] = Queen.new(@board, pos, :w)
           end
         end

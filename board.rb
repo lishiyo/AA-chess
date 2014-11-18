@@ -25,21 +25,23 @@ class Board
 
   # find position of king, see if any enemy piece can move there
   def in_check?(color)
-
+    #p "in: in_check? color: #{color}"
     enemy_pieces = pieces.select {|piece| piece.color != color }
 
     enemy_pieces.any? do |piece|
-      piece.moves.include?(my_king.pos)
+      piece.moves.include?(my_king(color).pos)
     end
+
   end
 
   # king's list of valid moves is zero!
   def checkmate?(color)
-    in_check?(color) && pieces.select { |piece| piece.color == color }
-      .all? { |piece| piece.valid_moves.empty? }
+    checkmate = in_check?(color) && pieces.select { |piece| piece.color == color }.all? { |piece| piece.valid_moves.empty? }
+    p checkmate
+    checkmate
   end
 
-  def my_king
+  def my_king(color)
     pieces.detect do |piece|
       piece.class == King && piece.color == color
     end
