@@ -10,19 +10,21 @@ class SteppingPiece < Piece
     deltas.each do |(dx, dy)|
       new_pos = pos
 
-      new_pos = [new_pos[0] + dx, new_pos[1] + dx]
+      new_pos = [new_pos[0] + dx, new_pos[1] + dy]
       break unless Board.in_bounds?(new_pos)
 
-      if board.new_pos.nil?
+      if board[new_pos].nil?
         valid_moves << new_pos
-      elsif board.new_pos.color != self.color
+      elsif board[new_pos].color != self.color
         valid_moves << new_pos
-        next
+        break
+      elsif board[new_pos].color == self.color
+        break
       end
-      next if board.new_pos.color == self.color
+
     end
 
-    valid_moves
+    valid_moves.uniq
   end
 
 end
@@ -43,4 +45,5 @@ class King < SteppingPiece
     [-1,1,-1,1].permutation(2).to_a.uniq +
     [[1, 0], [-1, 0], [0, 1], [0, -1]]
   end
+
 end
