@@ -3,6 +3,9 @@ require './piece.rb'
 require './sliding_pieces.rb'
 require './stepping_pieces.rb'
 
+class InvalidMove < StandardError
+end
+
 class Game
 
   attr_reader :board
@@ -26,7 +29,7 @@ class Game
           when rooks
             @board[pos] = Rook.new(@board, pos, :b)
           when knights
-            @board[pos] = Knight.new(@board, pos, :b)
+            @board[pos] = Knight.new(@board, pogames, :b)
           when bishops
             @board[pos] = Bishop.new(@board, pos, :b)
           when 3

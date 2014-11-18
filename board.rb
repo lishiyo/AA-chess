@@ -19,6 +19,10 @@ class Board
     @grid[pos[0]][pos[1]] = mark
   end
 
+  def delete(pos)
+    self[pos] = nil
+  end
+
   # find position of king, see if any enemy piece can move there
   def in_check?(color)
 
@@ -43,7 +47,24 @@ class Board
   # updates the @grid and also the moved piece's position
   # raise Exception if there is no piece at start_pos,
   # or if end_pos is not in piece's valid moves
+  def move!(start_pos, end_pos)
+    raise InvalidMove if self[start_pos].nil? ||
+      !self[start_pos].moves.include?(end_pos)
+
+    # delete piece at end_pos if it exists
+    self.delete(end_pos) if self[end_pos]
+
+    # move starting piece to end_pos
+    self[end_pos] = self[start_pos]
+    self[start_pos] = nil
+    self[end_pos].pos = end_pos #updates piece's internal pos
+  end
+
   def move(start_pos, end_pos)
+    raise DangerOfCheck unless self[start_pos] &&
+      self[start_pos].valid_moves.include?(end_pos)
+      
+    move!(start_pos, end_pos)
   end
 
   def inspect

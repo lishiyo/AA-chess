@@ -18,11 +18,13 @@ class Piece
 
   # filters out the moves of a Piece that would leave the player in check
   def valid_moves
-
+    moves.reject{ |pos| move_into_check?(pos) }
   end
 
-  def move_into_check?(pos)
-
+  def move_into_check?(end_pos)
+    duped_board = @board.dup
+    duped_board.move!(self.pos, end_pos)
+    duped_board.in_check?(self.color)
   end
 
   def inspect
