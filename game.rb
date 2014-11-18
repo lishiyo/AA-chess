@@ -13,14 +13,37 @@ class Game
 
   attr_reader :board
 
-  def initialize(player1, player2)
+  def initialize(player1 = HumanPlayer.new, player2 = HumanPlayer.new)
     @player1 = player1
     @player2 = player2
     @board = Board.new
+    setup_pieces
+    setup_players
   end
 
   def play_game
+    over = false
+    player = @player2
+    until over
+      player = player == @player2 ? @player1 : @player2
+      player_input = get_player_move(player) #write this tomorrow plz
+      start_loc, end_loc = player_input.split(",").map do |coord|
+        [translate_letter(coord[0]), translate_number(coord[1])]
+      end
+    end
+  end
 
+  def setup_players
+    @player1.color = :w
+    @player2.color = :b
+  end
+
+  def translate_letter(letter)
+    ("a".."h").to_a.index(letter)
+  end
+
+  def translate_number(num)
+    (num.to_i-8).abs
   end
 
   def setup_pieces
@@ -66,4 +89,11 @@ class Game
     end
   end
 
+end
+
+class HumanPlayer
+  attr_accessor :color
+
+  def initialize
+  end
 end
