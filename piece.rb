@@ -1,14 +1,22 @@
+require './board.rb'
+
 class Piece
 
-  def initialize(board, pos) #[row,col]
+  attr_reader :pos, :board, :color
+
+  def initialize(board, pos, color) #[row,col]
     @board = board
     @pos = pos
+    @color = color
   end
 
   # returns an array of places a Piece can move to
   def moves
 
   end
+
+
+
 end
 
 

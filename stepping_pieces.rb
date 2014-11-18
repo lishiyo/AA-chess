@@ -1,6 +1,29 @@
 require './piece.rb'
+require './board.rb'
 
 class SteppingPiece < Piece
+
+  def moves
+    valid_moves = []
+    deltas = move_dirs
+
+    deltas.each do |(dx, dy)|
+      new_pos = pos
+
+      new_pos = [new_pos[0] + dx, new_pos[1] + dx]
+      break unless Board.in_bounds?(new_pos)
+
+      if board.new_pos.nil?
+        valid_moves << new_pos
+      elsif board.new_pos.color != self.color
+        valid_moves << new_pos
+        next
+      end
+      next if board.new_pos.color == self.color
+    end
+
+    valid_moves
+  end
 
 end
 
