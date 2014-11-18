@@ -38,6 +38,10 @@ class Bishop < SlidingPiece
     [-1,1,-1,1].permutation(2).to_a.uniq
   end
 
+  def to_s
+    color == :w ? with_space('♗') : with_space('♝')
+  end
+
 end
 
 class Rook < SlidingPiece
@@ -45,6 +49,11 @@ class Rook < SlidingPiece
   def move_dirs
     [[1, 0], [-1, 0], [0, 1], [0, -1]]
   end
+
+  def to_s
+    color == :w ? with_space('♖') : with_space('♜')
+  end
+
 end
 
 class Queen < SlidingPiece
@@ -52,6 +61,10 @@ class Queen < SlidingPiece
   def move_dirs
     [-1,1,-1,1].permutation(2).to_a.uniq +
     [[1, 0], [-1, 0], [0, 1], [0, -1]]
+  end
+
+  def to_s
+    color == :w ? with_space('♕') : with_space('♛')
   end
 
 end

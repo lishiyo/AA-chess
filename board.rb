@@ -1,3 +1,4 @@
+
 class Board
 
   attr_accessor :grid
@@ -36,9 +37,8 @@ class Board
 
   # king's list of valid moves is zero!
   def checkmate?(color)
-    checkmate = in_check?(color) && pieces.select { |piece| piece.color == color }.all? { |piece| piece.valid_moves.empty? }
-    p checkmate
-    checkmate
+    in_check?(color) && pieces.select { |piece| piece.color == color }
+                        .all? { |piece| piece.valid_moves.empty? }
   end
 
   def my_king(color)
@@ -93,6 +93,24 @@ class Board
 
     dup_board
   end
+
+  def display_board
+    top = "┏" + "━" * 3 + ("┳" + "━" * 3) * 7 + "┓"
+    bottom = "┗" + "━" * 3 + ("┻" + "━" * 3) * 7 + "┛"
+    middle = "┣" + "━" * 3 + ("╋" + "━" * 3) * 7 + "┫"
+    puts top
+    @grid.each_with_index do |row, row_i|
+      arr = []
+      row.each_with_index do |col, col_i|
+        arr << self[[row_i, col_i]].to_s
+      end
+      puts ("┃").concat(arr.join("┃").concat("┃"))# "  |  "
+      puts middle unless row_i == @grid.count - 1
+    end
+    puts bottom
+    nil
+  end
+
 
   protected
 

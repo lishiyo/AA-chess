@@ -31,6 +31,9 @@ class Piece
       [@pos, @color]
   end
 
+  def with_space(char)
+    " #{char} "
+  end
 
 end
 
@@ -66,4 +69,22 @@ class Pawn < Piece
     end
     valid_moves.uniq
   end
+
+  def to_s
+    color == :w ? with_space('♙') : with_space('♟')
+  end
+
+end
+
+
+class NilClass
+
+  def with_space(char)
+    " #{char} "
+  end
+
+  def to_s
+    with_space(" ")
+  end
+
 end

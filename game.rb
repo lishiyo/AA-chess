@@ -19,6 +19,10 @@ class Game
     @board = Board.new
   end
 
+  def play_game
+
+  end
+
   def setup_pieces
     @board.grid.each_with_index do |row, row_i|
       row.each_with_index do |col, col_j|
@@ -61,6 +65,5 @@ class Game
       end
     end
   end
-
 
 end
