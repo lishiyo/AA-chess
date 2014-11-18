@@ -11,7 +11,7 @@ class SteppingPiece < Piece
       new_pos = pos
 
       new_pos = [new_pos[0] + dx, new_pos[1] + dy]
-      break unless Board.in_bounds?(new_pos)
+      next unless Board.in_bounds?(new_pos)
 
       if board[new_pos].nil?
         valid_moves << new_pos
