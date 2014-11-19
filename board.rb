@@ -19,25 +19,16 @@ class Board
     @grid[pos[0]][pos[1]] = mark
   end
 
-  def delete(pos)
-    self[pos] = nil
-  end
-
   # find position of king, see if any enemy piece can move there
   def in_check?(color)
-    #p "in: in_check? color: #{color}"
     enemy_pieces = pieces.select {|piece| piece.color != color }
 
-    enemy_pieces.any? do |piece|
-      piece.moves.include?(my_king(color).pos)
-    end
-
+    enemy_pieces.any? { |piece| piece.moves.include?(my_king(color).pos) }
   end
 
-  # king's list of valid moves is zero!
   def checkmate?(color)
     in_check?(color) && pieces.select { |piece| piece.color == color }
-                        .all? { |piece| piece.valid_moves.empty? }
+      .all? { |piece| piece.valid_moves.empty? }
   end
 
   def my_king(color)
@@ -50,21 +41,24 @@ class Board
   # raise Exception if there is no piece at start_pos,
   # or if end_pos is not in piece's valid moves
   def move!(start_pos, end_pos)
-    raise ChessError.new("This is not a possible move.") if self[start_pos].nil? ||
-      !self[start_pos].moves.include?(end_pos)
+    unless self[start_pos].moves.include?(end_pos)
+      raise ChessError.new("This is not a possible move.")
+    end
 
     # delete piece at end_pos if it exists
-    self.delete(end_pos) if self[end_pos]
+    delete(end_pos) if self[end_pos]
 
     # move starting piece to end_pos
     self[end_pos] = self[start_pos]
-    self[start_pos] = nil
+    delete(start_pos)
     self[end_pos].pos = end_pos #updates piece's internal pos
   end
 
   def move(start_pos, end_pos)
-    raise ChessError.new("This move puts you in check!") if self[start_pos] &&
-      ((self[start_pos].valid_moves)-(self[start_pos].moves)).include?(end_pos)
+    cause_check_moves = self[start_pos].valid_moves - self[start_pos].moves
+    if cause_check_moves.include?(end_pos)
+      raise ChessError.new("This move puts you in check!")
+    end
 
     move!(start_pos, end_pos)
   end
@@ -118,6 +112,12 @@ class Board
 
   def self.create_board
     Array.new(8) { Array.new(8, nil) }
+  end
+
+  private
+
+  def delete(pos)
+    self[pos] = nil
   end
 
 

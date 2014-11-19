@@ -22,7 +22,7 @@ class Game
 
     until over?
       @current_player = switch_player
-      
+
       if @board.in_check?(switch_player.color)
         puts "#{switch_player.color} is in check!"
       end
@@ -42,6 +42,8 @@ class Game
   def play_round
     begin
       start_pos, end_pos = @current_player.get_player_move # returns [[0,1], [1,2]]
+      raise ChessError.new("Empty starting position!") unless @board[start_pos]
+
       if @board[start_pos].color != @current_player.color
         raise ChessError.new("That's not your color!")
       end
@@ -131,10 +133,11 @@ class HumanPlayer < Player
     [start_pos, end_pos]
   end
 
-
   def handle_move_response(e)
     puts e.message
   end
+
+  private
 
   def translate_letter(letter)
     ("a".."h").to_a.index(letter)
