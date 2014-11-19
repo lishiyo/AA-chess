@@ -37,7 +37,8 @@ class Game
         retry
       end
       @board.display_board
-      puts "#{@current_player.to_s} moved from #{start_pos} to #{end_pos}."
+      raw_start, raw_end = @current_player.raw_input
+      puts "#{@current_player.to_s} moved from #{raw_start} to #{raw_end}."
     end
     puts "#{@current_player.to_s} wins!"
   end
@@ -118,14 +119,17 @@ end
 
 class HumanPlayer < Player
 
+  attr_reader :raw_input
+
   def initialize
   end
 
   def get_player_move
+
     puts "Make your move! For example, type in f2, f3."
     player_input = gets.chomp
+    @raw_input = player_input.delete(" ").split(",")
 
-    raw_input = player_input.delete(" ").split(",")
     unless raw_input.all?{|coord| coord =~ /^[a-h][1-8]$/ }
       raise ChessError.new("Not valid input!")
     end
@@ -136,6 +140,7 @@ class HumanPlayer < Player
 
     [start_pos, end_pos]
   end
+
 
   def handle_move_response(e)
     puts e.message
