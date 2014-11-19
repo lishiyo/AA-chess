@@ -9,6 +9,7 @@ class Piece
     @board = board
     @pos = pos
     @color = color
+    @board[pos] = self
   end
 
   # filters out the moves of a Piece that would leave the player in check

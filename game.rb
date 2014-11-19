@@ -13,10 +13,8 @@ class Game
   def initialize(player1 = HumanPlayer.new, player2 = HumanPlayer.new)
     @player1 = player1
     @player2 = player2
-    @current_player = player2
-    @board = Board.new
-    setup_pieces
-    setup_players
+
+    setup_game
   end
 
   def play_game
@@ -47,54 +45,40 @@ class Game
     @current_player == @player2 ? @player1 : @player2
   end
 
+  private
+
+  def over?
+    @board.checkmate?(switch_player.color)
+  end
+
+  def setup_game
+    @board = Board.new
+    setup_pieces
+    setup_players
+  end
+
   def setup_players
+    @current_player = @player2
     @player1.color = :w
     @player2.color = :b
   end
 
-  def over?
-      @board.checkmate?(switch_player.color)
-  end
-
-
   def setup_pieces
+
+    order = [Rook, Knight, Bishop, Queen, King, Bishop, Knight, Rook]
+
     @board.grid.each_with_index do |row, row_i|
-      row.each_with_index do |col, col_j|
+      order.each_with_index do |piece_type, col_j|
         pos = [row_i, col_j]
-        rooks = Proc.new {|el| el == 7 || el == 0 }
-        knights = Proc.new {|el| el == 6 || el == 1 }
-        bishops = Proc.new {|el| el == 5 || el == 2 }
         case row_i
         when 0
-          case col_j
-          when rooks
-            @board[pos] = Rook.new(@board, pos, :b)
-          when knights
-            @board[pos] = Knight.new(@board, pos, :b)
-          when bishops
-            @board[pos] = Bishop.new(@board, pos, :b)
-          when 4
-            @board[pos] = King.new(@board, pos, :b)
-          when 3
-            @board[pos] = Queen.new(@board, pos, :b)
-          end
-        when 1 # black pawns
-          @board[pos] = Pawn.new(@board, pos, :b)
+          piece_type.new(@board, pos, :b)
+        when 1
+          Pawn.new(@board, pos, :b)
         when 6
-          @board[pos] = Pawn.new(@board, pos, :w)
-        when 7 # whites
-          case col_j
-          when rooks
-            @board[pos] = Rook.new(@board, pos, :w)
-          when knights
-            @board[pos] = Knight.new(@board, pos, :w)
-          when bishops
-            @board[pos] = Bishop.new(@board, pos, :w)
-          when 4
-            @board[pos] = King.new(@board, pos, :w)
-          when 3
-            @board[pos] = Queen.new(@board, pos, :w)
-          end
+          Pawn.new(@board, pos, :w)
+        when 7
+          piece_type.new(@board, pos, :w)
         end
       end
     end
