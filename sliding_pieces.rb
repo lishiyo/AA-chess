@@ -21,7 +21,6 @@ class SlidingPiece < Piece
           break
         end
       end
-
     end
 
     valid_moves.uniq

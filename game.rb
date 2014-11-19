@@ -36,7 +36,7 @@ class Game
       @board.display_board
       puts "#{@current_player.to_s} moved from #{start_pos} to #{end_pos}."
     end
-    puts "#{switch_player.to_s} wins!"
+    puts "#{@current_player.to_s} wins!"
   end
 
   def switch_player
@@ -49,7 +49,7 @@ class Game
   end
 
   def over?
-      @board.checkmate?(@current_player.color)
+      @board.checkmate?(switch_player.color)
   end
 
 
