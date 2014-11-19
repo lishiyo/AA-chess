@@ -32,7 +32,7 @@ class Board
   end
 
   def move(start_pos, end_pos)
-    cause_check_moves = self[start_pos].valid_moves - self[start_pos].moves
+    cause_check_moves = self[start_pos].moves - self[start_pos].valid_moves
 
     if cause_check_moves.include?(end_pos)
       raise ChessError.new("This move puts you in check!")
@@ -95,6 +95,16 @@ class Board
     nil
   end
 
+  def pawn_at_ends?
+    (grid[0] + grid[7]).any?{ |piece| piece.class == Pawn }
+  end
+
+  def promote_pawn(color)
+    pawn = (grid[0] + grid[7]).detect{|piece| piece.class == Pawn }
+    pawn_pos = pawn.pos
+    delete(pawn_pos)
+    self[pawn_pos] = Queen.new(self, pawn_pos, color)
+  end
 
   protected
 

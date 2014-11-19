@@ -48,8 +48,7 @@ class Pawn < Piece
     }
 
     deltas[color].each_with_index do |(dx, dy), idx|
-      new_pos = pos
-      new_pos = [new_pos[0] + dx, new_pos[1] + dy]
+      new_pos = [pos[0] + dx, pos[1] + dy]
       next unless Board.in_bounds?(new_pos)
 
       case idx

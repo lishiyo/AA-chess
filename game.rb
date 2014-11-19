@@ -25,13 +25,17 @@ class Game
     until over?
       @current_player = switch_player
 
-      if @board.in_check?(switch_player.color)
-        puts "#{switch_player.color} is in check!"
-      end
-
       play_round
 
+      # If any pawns are now at the ends, delete that pawn and create a queen there.
+      @board.promote_pawn(@current_player.color) if @board.pawn_at_ends?
+
       @board.display_board
+
+      if @board.in_check?(switch_player.color)
+        puts "#{switch_player.to_s} is in check!"
+      end
+
       raw_start, raw_end = @current_player.raw_input
       puts "#{@current_player.to_s} moved from #{raw_start} to #{raw_end}."
     end
