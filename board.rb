@@ -76,6 +76,8 @@ class Board
   # end
 
   def can_castle?(color)
+    return false if in_check?(color)
+    
     king = my_king(color)
     rooks = pieces.select do |piece|
       piece.color == color && (piece.class == Rook)
