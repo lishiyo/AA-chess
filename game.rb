@@ -19,36 +19,45 @@ class Game
 
   def play_game
     @board.display_board
+
     until over?
       @current_player = switch_player
+      
       if @board.in_check?(switch_player.color)
         puts "#{switch_player.color} is in check!"
       end
-      begin
-        start_pos, end_pos = @current_player.get_player_move # returns [[0,1], [1,2]]
-        if @board[start_pos].color != @current_player.color
-          raise ChessError.new("That's not your color!")
-        end
-        @board.move(start_pos, end_pos) # throws DangerOfCheck or InvalidMove
-      rescue ChessError => e
-        @current_player.handle_move_response(e)
-        retry
-      end
+
+      play_round
+
       @board.display_board
       raw_start, raw_end = @current_player.raw_input
       puts "#{@current_player.to_s} moved from #{raw_start} to #{raw_end}."
     end
-    puts "#{@current_player.to_s} wins!"
-  end
 
-  def switch_player
-    @current_player == @player2 ? @player1 : @player2
+    puts "#{@current_player.to_s} wins!"
   end
 
   private
 
+  def play_round
+    begin
+      start_pos, end_pos = @current_player.get_player_move # returns [[0,1], [1,2]]
+      if @board[start_pos].color != @current_player.color
+        raise ChessError.new("That's not your color!")
+      end
+      @board.move(start_pos, end_pos) # throws DangerOfCheck or InvalidMove
+    rescue ChessError => e
+      @current_player.handle_move_response(e)
+      retry
+    end
+  end
+
   def over?
     @board.checkmate?(switch_player.color)
+  end
+
+  def switch_player
+    @current_player == @player2 ? @player1 : @player2
   end
 
   def setup_game
@@ -104,9 +113,6 @@ end
 class HumanPlayer < Player
 
   attr_reader :raw_input
-
-  def initialize
-  end
 
   def get_player_move
 
