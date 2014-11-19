@@ -23,6 +23,9 @@ class Game
     @board.display_board
     until over?
       @current_player = switch_player
+      if @board.in_check?(switch_player.color)
+        puts "#{switch_player.color} is in check!"
+      end
       begin
         start_pos, end_pos = @current_player.get_player_move # returns [[0,1], [1,2]]
         if @board[start_pos].color != @current_player.color
