@@ -94,16 +94,18 @@ class Board
   end
 
   def display_board
-    top = "┏" + "━" * 3 + ("┳" + "━" * 3) * 7 + "┓"
-    bottom = "┗" + "━" * 3 + ("┻" + "━" * 3) * 7 + "┛"
-    middle = "┣" + "━" * 3 + ("╋" + "━" * 3) * 7 + "┫"
+    nums = "   ".concat(("a".."h").to_a.join("   "))
+    top = " ┏" + "━" * 3 + ("┳" + "━" * 3) * 7 + "┓"
+    bottom = " ┗" + "━" * 3 + ("┻" + "━" * 3) * 7 + "┛"
+    middle = " ┣" + "━" * 3 + ("╋" + "━" * 3) * 7 + "┫"
+    puts nums
     puts top
     @grid.each_with_index do |row, row_i|
-      arr = []
+      arr = ["#{(row_i-8).abs}"]
       row.each_with_index do |col, col_i|
         arr << self[[row_i, col_i]].to_s
       end
-      puts ("┃").concat(arr.join("┃").concat("┃"))# "  |  "
+      puts arr.join("┃").concat("┃")# "  |  "
       puts middle unless row_i == @grid.count - 1
     end
     puts bottom
