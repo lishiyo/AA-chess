@@ -3,13 +3,14 @@ require './board.rb'
 class Piece
 
   attr_reader :board
-  attr_accessor :pos, :color
+  attr_accessor :pos, :color, :has_moved
 
   def initialize(board, pos, color) #[row,col]
     @board = board
     @pos = pos
     @color = color
     @board[pos] = self
+    @has_moved = false
   end
 
   # filters out the moves of a Piece that would leave the player in check

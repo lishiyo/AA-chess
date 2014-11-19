@@ -47,4 +47,17 @@ class King < SteppingPiece
     color == :w ? with_space('♔') : with_space('♚')
   end
 
+  def moves
+    valid_moves = super
+
+    if board.can_castle_right?(color)
+      pos = [self.pos[0], self.pos[1] + 2]
+      valid_moves << pos
+    elsif board.can_castle_left?(color)
+      pos = [self.pos[0], self.pos[1] - 2]
+      valid_moves << pos
+    end
+
+    valid_moves
+  end
 end

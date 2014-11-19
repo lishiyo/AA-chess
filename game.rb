@@ -15,7 +15,6 @@ class Game
   def initialize(player1 = HumanPlayer.new, player2 = HumanPlayer.new)
     @player1 = player1
     @player2 = player2
-
     setup_game
   end
 
@@ -47,13 +46,14 @@ class Game
 
   def play_round
     begin
-      player_move = @current_player.get_player_move # returns [[0,1], [1,2]]
+      player_move = @current_player.get_player_move(@board) # returns [[0,1], [1,2]]
       case player_move
       when "save"
         save_game
         exit
       else
         start_pos, end_pos = player_move
+        castling = player_move[2] if player_move[2]
       end
 
       raise ChessError.new("Empty starting position!") unless @board[start_pos]
@@ -62,6 +62,7 @@ class Game
         raise ChessError.new("That's not your color!")
       end
       @board.move(start_pos, end_pos) # throws DangerOfCheck or InvalidMove
+      @board.castle_rook(@current_player.color) if castling
     rescue ChessError => e
       @current_player.handle_move_response(e)
       retry
@@ -136,10 +137,20 @@ class HumanPlayer < Player
 
   attr_reader :raw_input
 
-  def get_player_move
-
-    puts "Make your move! For example, type in f2, f3. Or type 'save' to save and quit."
-    player_input = gets.chomp
+  def get_player_move(board)
+    if board.can_castle?(color)
+      puts "Make your move (ex: f2, f3) or type 'castle' to castle."
+      player_input = gets.chomp
+      if player_input == 'castle'
+        puts "Input your king's move (ex: e1, g1)."
+        player_input = gets.chomp
+        castling = true
+      end
+    else
+      castling = nil
+      puts "Make your move! For example, type in f2, f3. Or type 'save' to save and quit."
+      player_input = gets.chomp
+    end
 
     if player_input == "save"
       return "save"
@@ -154,7 +165,7 @@ class HumanPlayer < Player
         [translate_number(coord[1]), translate_letter(coord[0])]
       end
 
-      [start_pos, end_pos]
+      [start_pos, end_pos, castling]
     end
   end
 

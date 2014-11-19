@@ -38,13 +38,14 @@ class Board
       raise ChessError.new("This move puts you in check!")
     end
 
+    unless self[start_pos].moves.include?(end_pos)
+      raise ChessError.new("This is not a possible move.")
+    end
+
     move!(start_pos, end_pos)
   end
 
   def move!(start_pos, end_pos)
-    unless self[start_pos].moves.include?(end_pos)
-      raise ChessError.new("This is not a possible move.")
-    end
 
     # delete piece at end_pos if it exists
     delete(end_pos) if self[end_pos]
@@ -53,6 +54,19 @@ class Board
     self[end_pos] = self[start_pos]
     delete(start_pos)
     self[end_pos].pos = end_pos #updates piece's internal pos
+    self[end_pos].has_moved = true
+  end
+
+  def castle_rook(color)
+    my_rooks = pieces.select{|piece| piece.color == color && piece.class == Rook}
+    king = my_king(color)
+    closest_rook = my_rooks.min_by{ |rook| (king.pos[1] - rook.pos[1]).abs }
+
+    if closest_rook.pos[1] == 0
+      move!(closest_rook.pos, [closest_rook.pos[0], 3])
+    else
+      move!(closest_rook.pos, [closest_rook.pos[0], 5])
+    end
   end
 
   # def inspect
@@ -60,6 +74,56 @@ class Board
   #     p row.map { |el| [el.class, el.color] if el }
   #   end
   # end
+
+  def can_castle?(color)
+    king = my_king(color)
+    rooks = pieces.select do |piece|
+      piece.color == color && (piece.class == Rook)
+    end
+
+
+    if king.has_moved || rooks.all? { |rook| rook.has_moved }
+      return false
+    end
+
+    can_castle_left?(color) || can_castle_right?(color)
+  end
+
+  def can_castle_left?(color)
+    king = my_king(color)
+    rooks = pieces.select do |piece|
+      piece.color == color && (piece.class == Rook)
+    end
+    king_row = king.pos[0]
+
+    spaces_between_left = (1 ... king.pos[1]).map do |col_i|
+      [king_row, col_i]
+    end
+
+    if spaces_between_left.all? { |space| self[space].nil? }
+      return spaces_between_left.none? { |space| king.move_into_check?(space) }
+    end
+
+    false
+  end
+
+  def can_castle_right?(color)
+    king = my_king(color)
+    rooks = pieces.select do |piece|
+      piece.color == color && (piece.class == Rook)
+    end
+    king_row = king.pos[0]
+
+    spaces_between_right = (king.pos[1]+1 ... 7).map do |col_i|
+      [king_row, col_i]
+    end
+
+    if spaces_between_right.all?{ |space| self[space].nil? }
+      return spaces_between_right.none? { |space| king.move_into_check?(space) }
+    end
+
+    false
+  end
 
   def dup
     dup_board = Board.new
