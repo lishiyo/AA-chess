@@ -69,6 +69,7 @@ class Board
     move!(start_pos, end_pos)
   end
 
+
   # def inspect
   #   @grid.each do |row|
   #     p row.map { |el| [el.class, el.color] if el }

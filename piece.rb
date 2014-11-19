@@ -11,11 +11,6 @@ class Piece
     @color = color
   end
 
-  # returns an array of places a Piece can move to
-  def moves
-
-  end
-
   # filters out the moves of a Piece that would leave the player in check
   def valid_moves
     moves.reject{ |pos| move_into_check?(pos) }
@@ -29,6 +24,21 @@ class Piece
 
   def inspect
       [@pos, @color]
+  end
+
+  protected
+
+  def fill_valid_moves
+    Proc.new do
+      if board[new_pos].nil?
+        valid_moves << new_pos
+      elsif board[new_pos].color != self.color
+        valid_moves << new_pos
+        break
+      elsif board[new_pos].color == self.color
+        break
+      end
+    end
   end
 
   def with_space(char)
@@ -51,7 +61,6 @@ class Pawn < Piece
 
     deltas[color].each_with_index do |(dx, dy), idx|
       new_pos = pos
-
       new_pos = [new_pos[0] + dx, new_pos[1] + dy]
       next unless Board.in_bounds?(new_pos)
 
@@ -79,12 +88,8 @@ end
 
 class NilClass
 
-  def with_space(char)
-    " #{char} "
-  end
-
   def to_s
-    with_space(" ")
+    "   "
   end
 
 end
