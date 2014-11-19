@@ -28,19 +28,6 @@ class Piece
 
   protected
 
-  def fill_valid_moves
-    Proc.new do
-      if board[new_pos].nil?
-        valid_moves << new_pos
-      elsif board[new_pos].color != self.color
-        valid_moves << new_pos
-        break
-      elsif board[new_pos].color == self.color
-        break
-      end
-    end
-  end
-
   def with_space(char)
     " #{char} "
   end

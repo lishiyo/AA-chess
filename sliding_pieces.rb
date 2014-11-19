@@ -12,7 +12,14 @@ class SlidingPiece < Piece
         new_pos = [new_pos[0] + dx, new_pos[1] + dy]
         break unless Board.in_bounds?(new_pos)
 
-        fill_valid_moves.call
+        if board[new_pos].nil?
+          valid_moves << new_pos
+        elsif board[new_pos].color != self.color
+          valid_moves << new_pos
+          break
+        elsif board[new_pos].color == self.color
+          break
+        end
       end
 
     end

@@ -10,7 +10,11 @@ class SteppingPiece < Piece
       new_pos = [pos[0] + dx, pos[1] + dy]
       next unless Board.in_bounds?(new_pos)
 
-      fill_valid_moves.call
+      if board[new_pos].nil?
+        valid_moves << new_pos
+      elsif board[new_pos].color != self.color
+        valid_moves << new_pos
+      end
     end
 
     valid_moves.uniq

@@ -63,8 +63,8 @@ class Board
   end
 
   def move(start_pos, end_pos)
-    raise ChessError.new("This move puts you in check!") unless self[start_pos] &&
-      self[start_pos].valid_moves.include?(end_pos)
+    raise ChessError.new("This move puts you in check!") if self[start_pos] &&
+      ((self[start_pos].valid_moves)-(self[start_pos].moves)).include?(end_pos)
 
     move!(start_pos, end_pos)
   end
