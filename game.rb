@@ -3,6 +3,8 @@ require './piece.rb'
 require './sliding_pieces.rb'
 require './stepping_pieces.rb'
 
+require 'yaml'
+
 class ChessError < StandardError
 end
 
@@ -34,14 +36,22 @@ class Game
       puts "#{@current_player.to_s} moved from #{raw_start} to #{raw_end}."
     end
 
-    puts "#{@current_player.to_s} wins!"
+    puts "Checkmate! #{@current_player.to_s} wins!"
   end
 
   private
 
   def play_round
     begin
-      start_pos, end_pos = @current_player.get_player_move # returns [[0,1], [1,2]]
+      player_move = @current_player.get_player_move # returns [[0,1], [1,2]]
+      case player_move
+      when "save"
+        save_game
+        exit
+      else
+        start_pos, end_pos = player_move
+      end
+
       raise ChessError.new("Empty starting position!") unless @board[start_pos]
 
       if @board[start_pos].color != @current_player.color
@@ -75,7 +85,6 @@ class Game
   end
 
   def setup_pieces
-
     order = [Rook, Knight, Bishop, Queen, King, Bishop, Knight, Rook]
 
     @board.grid.each_with_index do |row, row_i|
@@ -95,6 +104,13 @@ class Game
     end
   end
 
+  def save_game
+    @current_player = switch_player
+    puts "Enter a filename for your saved game:"
+    filename = gets.chomp
+
+    File.write(filename, YAML.dump(self))
+  end
 end
 
 class Player
@@ -118,19 +134,24 @@ class HumanPlayer < Player
 
   def get_player_move
 
-    puts "Make your move! For example, type in f2, f3."
+    puts "Make your move! For example, type in f2, f3. Or type 'save' to save and quit."
     player_input = gets.chomp
-    @raw_input = player_input.delete(" ").split(",")
 
-    unless raw_input.all?{|coord| coord =~ /^[a-h][1-8]$/ }
-      raise ChessError.new("Not valid input!")
+    if player_input == "save"
+      return "save"
+    else
+      @raw_input = player_input.delete(" ").split(",")
+
+      unless raw_input.all?{|coord| coord =~ /^[a-h][1-8]$/ }
+        raise ChessError.new("Not valid input!")
+      end
+
+      start_pos, end_pos = raw_input.map do |coord|
+        [translate_number(coord[1]), translate_letter(coord[0])]
+      end
+
+      [start_pos, end_pos]
     end
-
-    start_pos, end_pos = raw_input.map do |coord|
-      [translate_number(coord[1]), translate_letter(coord[0])]
-    end
-
-    [start_pos, end_pos]
   end
 
   def handle_move_response(e)
@@ -145,5 +166,15 @@ class HumanPlayer < Player
 
   def translate_number(num)
     (num.to_i-8).abs
+  end
+
+end
+
+
+if __FILE__ == $PROGRAM_NAME
+  # ruby game.rb saved-game.yaml
+  case ARGV.size
+  when 1 then YAML.load_file(ARGV.shift).play_game
+  when 0 then Game.new.play_game
   end
 end

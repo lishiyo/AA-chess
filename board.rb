@@ -31,15 +31,16 @@ class Board
       .all? { |piece| piece.valid_moves.empty? }
   end
 
-  def my_king(color)
-    pieces.detect do |piece|
-      piece.class == King && piece.color == color
+  def move(start_pos, end_pos)
+    cause_check_moves = self[start_pos].valid_moves - self[start_pos].moves
+
+    if cause_check_moves.include?(end_pos)
+      raise ChessError.new("This move puts you in check!")
     end
+
+    move!(start_pos, end_pos)
   end
 
-  # updates the @grid and also the moved piece's position
-  # raise Exception if there is no piece at start_pos,
-  # or if end_pos is not in piece's valid moves
   def move!(start_pos, end_pos)
     unless self[start_pos].moves.include?(end_pos)
       raise ChessError.new("This is not a possible move.")
@@ -54,31 +55,17 @@ class Board
     self[end_pos].pos = end_pos #updates piece's internal pos
   end
 
-  def move(start_pos, end_pos)
-    cause_check_moves = self[start_pos].valid_moves - self[start_pos].moves
-    if cause_check_moves.include?(end_pos)
-      raise ChessError.new("This move puts you in check!")
-    end
-
-    move!(start_pos, end_pos)
-  end
-
-
   # def inspect
   #   @grid.each do |row|
   #     p row.map { |el| [el.class, el.color] if el }
   #   end
   # end
 
-  def pieces
-    @grid.flatten.reject{ |square| square.nil? }
-  end
-
   def dup
     dup_board = Board.new
 
     @grid.each_with_index do |row, row_idx|
-      dup_board.grid[row_idx] = row.map do |piece|
+      row.each do |piece|
         unless piece.nil?
           piece.class.new(dup_board, piece.pos, piece.color)
         end
@@ -93,6 +80,7 @@ class Board
     top = " ┏" + "━" * 3 + ("┳" + "━" * 3) * 7 + "┓"
     bottom = " ┗" + "━" * 3 + ("┻" + "━" * 3) * 7 + "┛"
     middle = " ┣" + "━" * 3 + ("╋" + "━" * 3) * 7 + "┫"
+    puts ""
     puts nums
     puts top
     @grid.each_with_index do |row, row_i|
@@ -120,5 +108,14 @@ class Board
     self[pos] = nil
   end
 
+  def my_king(color)
+    pieces.detect do |piece|
+      piece.class == King && piece.color == color
+    end
+  end
+
+  def pieces
+    @grid.flatten.reject{ |square| square.nil? }
+  end
 
 end
