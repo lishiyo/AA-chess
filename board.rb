@@ -1,4 +1,3 @@
-
 class Board
 
   attr_accessor :grid
@@ -51,7 +50,7 @@ class Board
   # raise Exception if there is no piece at start_pos,
   # or if end_pos is not in piece's valid moves
   def move!(start_pos, end_pos)
-    raise InvalidMove if self[start_pos].nil? ||
+    raise ChessError.new("This is not a possible move.") if self[start_pos].nil? ||
       !self[start_pos].moves.include?(end_pos)
 
     # delete piece at end_pos if it exists
@@ -64,17 +63,17 @@ class Board
   end
 
   def move(start_pos, end_pos)
-    raise DangerOfCheck unless self[start_pos] &&
+    raise ChessError.new("This move puts you in check!") unless self[start_pos] &&
       self[start_pos].valid_moves.include?(end_pos)
 
     move!(start_pos, end_pos)
   end
 
-  def inspect
-    @grid.each do |row|
-      p row.map { |el| [el.class, el.color] if el }
-    end
-  end
+  # def inspect
+  #   @grid.each do |row|
+  #     p row.map { |el| [el.class, el.color] if el }
+  #   end
+  # end
 
   def pieces
     @grid.flatten.reject{ |square| square.nil? }
