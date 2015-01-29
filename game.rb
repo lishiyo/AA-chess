@@ -1,7 +1,7 @@
-require './board.rb'
-require './piece.rb'
-require './sliding_pieces.rb'
-require './stepping_pieces.rb'
+require_relative 'lib/board.rb'
+require_relative 'lib/piece.rb'
+require_relative 'lib/sliding_pieces.rb'
+require_relative 'lib/stepping_pieces.rb'
 
 require 'yaml'
 
@@ -32,14 +32,14 @@ class Game
       @board.display_board
 
       if @board.in_check?(switch_player.color)
-        puts "#{switch_player.to_s} is in check!"
+				puts "#{switch_player.to_s.upcase} is in check!"
       end
 
       raw_start, raw_end = @current_player.raw_input
-      puts "#{@current_player.to_s} moved from #{raw_start} to #{raw_end}."
+			puts "#{@current_player} moved from #{raw_start} to #{raw_end}."
     end
 
-    puts "Checkmate! #{@current_player.to_s} wins!"
+		puts "Checkmate! #{@current_player} wins!"
   end
 
   private
@@ -61,6 +61,7 @@ class Game
       if @board[start_pos].color != @current_player.color
         raise ChessError.new("That's not your color!")
       end
+			
       @board.move(start_pos, end_pos) # throws DangerOfCheck or InvalidMove
       @board.castle_rook(@current_player.color) if castling
     rescue ChessError => e
@@ -121,8 +122,8 @@ end
 class Player
 
   COLORS = {
-    :b => "Black",
-    :w => "White"
+    :b => "BLACK",
+    :w => "WHITE"
   }
 
   attr_accessor :color
@@ -139,7 +140,7 @@ class HumanPlayer < Player
 
   def get_player_move(board)
     if board.can_castle?(color)
-      puts "Make your move (ex: f2, f3) or type 'castle' to castle."
+			puts "#{self}'s MOVE. Ex: Type in f2, f3. Or type 'castle' to castle, 'save' to save and quit."
       player_input = gets.chomp
       if player_input == 'castle'
         puts "Input your king's move (ex: e1, g1)."
@@ -148,7 +149,7 @@ class HumanPlayer < Player
       end
     else
       castling = nil
-      puts "Make your move! For example, type in f2, f3. Or type 'save' to save and quit."
+			puts "#{self}'s MOVE. EX: Type in f2, f3. Or type 'save' to save and quit."
       player_input = gets.chomp
     end
 
@@ -158,7 +159,7 @@ class HumanPlayer < Player
       @raw_input = player_input.delete(" ").split(",")
 
       unless raw_input.all?{|coord| coord =~ /^[a-h][1-8]$/ }
-        raise ChessError.new("Not valid input!")
+				raise ChessError.new("Invalid input!")
       end
 
       start_pos, end_pos = raw_input.map do |coord|

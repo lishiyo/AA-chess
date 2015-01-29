@@ -142,6 +142,7 @@ class Board
   end
 
   def display_board
+		puts ""
     nums = "   ".concat(("a".."h").to_a.join("   "))
     top = " ┏" + "━" * 3 + ("┳" + "━" * 3) * 7 + "┓"
     bottom = " ┗" + "━" * 3 + ("┻" + "━" * 3) * 7 + "┛"

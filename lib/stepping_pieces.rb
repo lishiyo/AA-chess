@@ -1,5 +1,5 @@
-require './piece.rb'
-require './board.rb'
+require_relative './piece.rb'
+require_relative './board.rb'
 
 class SteppingPiece < Piece
 
